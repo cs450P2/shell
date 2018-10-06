@@ -1,0 +1,30 @@
+size = number of commands separated by pipes
+int pfd[2]
+pipe(pfd)
+
+size == 1
+	fork
+		dup2(pfd[1], 1)
+		first command
+size == 2
+	fork
+		dup2(pfd[1], 1)
+
+		first command
+	fork
+		dup2(pfd[0], 0)
+		last command
+
+size => 3
+	fork
+		dup2(pfd[1], 1)
+		first command
+
+	fork for all middle commands
+		dup2(pfd[0], 0)
+		dup2(pfd[1], 1)
+		at least 1 middle commmand(commands[1 : size-1]) // python string slice = [1, size - 1)
+		pfd[0] = pft[1] // input is set to last command's output for next command
+	fork
+		dup2(pfd[0], 0)
+		last command
