@@ -135,9 +135,14 @@ int main()
 	char* f = "wc\0-l\0<\0inputfile\0>>\0outputfile\0";
 
 	char** words = malloc(sizeof(char*) * 3);
-	words[0] =  &e[0];
+	words[0] = &e[0];
 	words[1] = &e[4];
 	words[2] = &e[6];
+	/*
+	words[0] = &a[0];
+	words[1] = &a[3];
+	words[2] = &a[6];
+	*/
 	for(int i = 0; i < 3; i++)
 
 		printf("%s\n", words[i]);
@@ -145,15 +150,15 @@ int main()
 	int state = command;
 	int location_of_first_next_state = firstNextState(state);
 	printf("%i\n", location_of_first_next_state);
-	int* set_next_states = malloc(sizeof(int) * 5);
+	int* set_of_next_states = malloc(sizeof(int) * 5);
 
-	memcpy(set_next_states, next_states + location_of_first_next_state, sizeof(int) * 5);
+	memcpy(set_of_next_states, next_states + location_of_first_next_state, sizeof(int) * 5);
 	printf("new set of next states\n");
 	for(int i = 0; i < 5; i++)
-		printf("%s ", getEnum(set_next_states[i]));
-	printf("%i\n", isEmpty(set_next_states));
+		printf("%s ", getEnum(set_of_next_states[i]));
+	printf("%i\n", isEmpty(set_of_next_states));
 
-	printf("start machine\n");
+	printf("start machine\n\n");
 	int j = 0;
 	int count = 0;
 	int winning_state;
@@ -161,28 +166,29 @@ int main()
 	// an instance of the command struct would be declared here.
 	// the states will fill up parts of the struct
 	// after this loop is over, the entire struct will be filld out
-	while(!isEmpty(set_next_states))
+	while(!isEmpty(set_of_next_states))
 	{
 
+		/*
 		if(count == 5)
 		{
 			printf("ran too long\n");
 			exit(1);
 		}
-
+		*/
 		bool state_changed = false;
-		printf("current state is %s\n", getEnum(winning_state));
+		//printf("current state is %s\n", getEnum(winning_state));
 		winning_state = 0;
 		for(int i = 0; i < 5; i++)
 		{
-			//printf("	%s\n", getEnum(set_next_states[i]));
+			//printf("	%s\n", getEnum(set_of_next_states[i]));
 
 			//printf("i = %i\n", i);
-			//printf("%s \n", getEnum(set_next_states[i]));
+			//printf("%s \n", getEnum(set_of_next_states[i]));
 
 			//printf("got here%i\n", j);
 
-			if(set_next_states[i] == end_of_command)
+			if(set_of_next_states[i] == end_of_command)
 			{
 				// we are
 				if( j >= 3)
@@ -193,16 +199,17 @@ int main()
 				}
 				//break;
 			}
-			else if(set_next_states[i] == command)
+			else if(set_of_next_states[i] == command)
 			{
 				//printf("j final %i\n", j);
 				//printf("	did state change %i\n", state_changed);
 
 				if(j < 3)
 				{
-					if(strcmp(words[j], ">") != 0||  strcmp(words[j], "<") != 0 || strcmp(words[j], ">>") != 0)
+
+					if(strcmp(words[j], ">") != 0 ||  strcmp(words[j], "<") != 0 || strcmp(words[j], ">>") != 0)
 					{
-						//printf("command %s\n", words[j]);
+						printf("command %s", words[j]);
 						//printf("case state %s\n", getEnum(prev_state));
 						j++;
 						winning_state = command;
@@ -215,20 +222,20 @@ int main()
 				//break;
 			}
 			/*
-			else if (set_next_states[i] == std_in)
+			else if (set_of_next_states[i] == std_in)
 			{
 				state = std_in;
 				state_changed = true;
 
 				break;
 			}*/
-			else if(set_next_states[i] == std_out)
+			else if(set_of_next_states[i] == std_out)
 			{
 				if (j < 3)
 				{
 					if(strcmp(words[j], ">") == 0)
 					{
-						printf("stdout %s\n", words[j]);
+						printf("stdout %s", words[j]);
 						j++;
 						winning_state = std_out;
 						state_changed = true;
@@ -238,26 +245,26 @@ int main()
 				//break;
 			}
 			/*
-			else if (set_next_states[i] == append)
+			else if (set_of_next_states[i] == append)
 			{
 				state = append;
 				state_changed = true;
 				break;
 			}
 
-			else if(set_next_states[i] == input_file)
+			else if(set_of_next_states[i] == input_file)
 			{
 				state = input_file;
 				state_changed = true;
 				break;
 			}*/
-			else if(set_next_states[i] == output_file)
+			else if(set_of_next_states[i] == output_file)
 			{
 				if(j < 3)
 				{
-					if(strcmp(words[j], ">") != 0||  strcmp(words[j], "<") != 0 || strcmp(words[j], ">>") != 0)
+					if(strcmp(words[j], ">") != 0 ||  strcmp(words[j], "<") != 0 || strcmp(words[j], ">>") != 0)
 					{
-						printf("output file %s\n", words[j]);
+						printf("output_file %s", words[j]);
 						j++;
 						winning_state = output_file;
 						state_changed = true;
@@ -268,7 +275,7 @@ int main()
 
 				//break;
 			}
-			else if(set_next_states[i] == filler)
+			else if(set_of_next_states[i] == filler)
 			{
 				//state = filler;
 				//state_changed = true;
@@ -291,7 +298,7 @@ int main()
 			// exit program
 		}
 
-		printf("state = %s  %i  \n", getEnum(winning_state), j);
+		//printf("state = %s  %i  \n", getEnum(winning_state), j);
 		/*if (j < 3)
 		{
 			printf("%s\n", words[j]);
@@ -308,22 +315,24 @@ int main()
 			location_of_first_next_state = firstNextState(winning_state);
 			prev_state = winning_state;
 			//printf("next firstst states %i\n", location_of_first_next_state);
-			free(set_next_states);
-			set_next_states = malloc(sizeof(int) * 5);
-
-			memcpy(set_next_states, next_states + location_of_first_next_state, sizeof(int) * 5);
+			//free(set_of_next_states);
+			//set_of_next_states = malloc(sizeof(int) * 5);
+			// want to start the copy at location next_states root address + the computed location of the first next state in the next_states array.  5 elements will be
+			memcpy(set_of_next_states, next_states + location_of_first_next_state, sizeof(int) * 5);
 			//printf("new set of next states\n");
 			/*
 			for(int i = 0; i < 5; i++)
-				printf("%s ", getEnum(set_next_states[i]));
+				printf("%s ", getEnum(set_of_next_states[i]));
 			*/
-			//printf("%i", isEmpty(set_next_states));
+			//printf("%i", isEmpty(set_of_next_states));
 			//exit(1);
 			//break;
 		}
-		printf("\n\n");
+		printf("\n");
 		count++;
 	}
+	free(set_of_next_states);
+	free(words);
 	printf("j = %i\n", j);
 	printf("done with machine\n");
 	//(location_of_first_next_state + 2));
