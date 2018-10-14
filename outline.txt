@@ -28,3 +28,8 @@ size => 3
 	fork
 		dup2(pfd[0], 0)
 		last command
+
+
+command -> stdin, stdout
+stdin -> infile
+infile 
